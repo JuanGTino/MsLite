@@ -11,17 +11,24 @@ from fastapi import Request, HTTPException
 
 # Versión asíncrona de get_db
 async def get_db(request: Request):
-    host = request.headers.get("host")
+    host = request.headers.get("domain")
     db_name = request.headers.get("x-database")
 
     if not host:
-        raise HTTPException(status_code=400, detail="Host header missing")
+        raise HTTPException(status_code=400, detail="Domain header missing")
     if not db_name:
         raise HTTPException(status_code=400, detail="Database name not provided")
 
     key = (host, db_name)
+    
+    # Debug: mostrar qué se está buscando vs qué existe
+    available_keys = list(session.keys())
+    
     if key not in session:
-        raise HTTPException(status_code=404, detail="Database not found")
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Database not found. Looking for: {key}. Available: {available_keys}"
+        )
 
     async with session[key]() as db:
             yield db
@@ -42,7 +49,7 @@ async def get_db(request: Request):
 # from sqlalchemy.orm import Session
 
 # def get_db(request: Request):
-#     host = request.headers.get("host")
+#     host = request.headers.get("domain")
 #     db_name = request.headers.get("x-database")
 
 #     if not host:

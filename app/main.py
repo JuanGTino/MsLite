@@ -18,7 +18,7 @@ app.add_middleware(
 # Middleware para verificar la cabecera Host, asegurando que esté presente en cada solicitud
 @app.middleware("http")
 async def check_host_header(request: Request, call_next):
-    host = request.headers.get("host")
+    host = request.headers.get("domain")
     if not host:
         return JSONResponse(
             status_code=400,

@@ -10,6 +10,6 @@ router = APIRouter()
 
 @router.get("/tanquesprecios")
 async def tanques_precios(request: Request, db: AsyncSession = Depends(get_db)):
-    host = request.headers.get("host")
+    host = request.headers.get("domain")
     db_name = request.headers.get("x-database")
     return await get_tanques_precios(db, host, db_name)
